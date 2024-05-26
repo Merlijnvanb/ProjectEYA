@@ -7,8 +7,8 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: UniversalRP_SphereBoxMorph_Lit
-  m_Shader: {fileID: 4800000, guid: c05803c4ba37842bebdebfc4688a7579, type: 3}
+  m_Name: TwistingCubes
+  m_Shader: {fileID: 4800000, guid: 898acee1b87f6d84e8bc397c06f4e894, type: 3}
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
   m_ValidKeywords: []
@@ -23,35 +23,21 @@ Material:
   m_LockedProperties: 
   m_SavedProperties:
     serializedVersion: 3
-    m_TexEnvs:
-    - _BaseMap:
-        m_Texture: {fileID: 0}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
-    - _ClearCoatMap:
-        m_Texture: {fileID: 0}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
+    m_TexEnvs: []
     m_Ints: []
     m_Floats:
     - _BlendDst: 10
     - _BlendSrc: 5
-    - _ClearCoat: 0
-    - _ClearCoatMask: 0
-    - _ClearCoatSmoothness: 1
     - _Cull: 0
     - _DistanceMultiplier: 1
-    - _EnvironmentReflections: 1
     - _Loop: 30
-    - _Metallic: 0
-    - _MinDistance: 0.0037
+    - _MinDistance: 0.01
     - _NormalDelta: 0.0001
     - _ShadowExtraBias: 0.01
     - _ShadowLoop: 10
-    - _ShadowMinDistance: 0.007
-    - _Smoothness: 0.8
+    - _ShadowMinDistance: 0.01
     - _ZWrite: 1
     m_Colors:
-    - _BaseColor: {r: 1, g: 1, b: 1, a: 1}
-    - _Color: {r: 0.5, g: 0.5, b: 0.5, a: 1}
+    - _Color: {r: 1, g: 1, b: 1, a: 1}
+    - _Color2: {r: 1, g: 1, b: 1, a: 1}
   m_BuildTextureStacks: []

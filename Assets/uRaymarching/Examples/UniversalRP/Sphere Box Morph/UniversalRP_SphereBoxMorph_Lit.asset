@@ -14,14 +14,14 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   shaderName: UniversalRP_SphereBoxMorph_Lit
   shaderReference: {fileID: 4800000, guid: c05803c4ba37842bebdebfc4688a7579, type: 3}
-  shaderTemplate: uRaymarching/UniversalRP/Lit
+  shaderTemplate: uRaymarching/UniversalRP/Unlit
   variables:
   - key: Name
     value: UniversalRP_SphereBoxMorph_Lit
   - key: ObjectShape
     value: CUBE
   - key: RaymarchingShaderDirectory
-    value: Assets/uRaymarching/Runtime/Shaders/Include/UniversalRP
+    value: Assets\uRaymarching\Runtime\Shaders\Include\UniversalRP
   - key: RenderType
     value: Opaque
   - key: RenderQueue
@@ -81,4 +81,4 @@ MonoBehaviour:
   conditionsFolded: 1
   variablesFolded: 1
   materialsFolded: 1
-  constantsFolded: 0
+  constantsFolded: 1

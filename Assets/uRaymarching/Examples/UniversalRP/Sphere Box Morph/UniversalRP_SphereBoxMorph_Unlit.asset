@@ -21,16 +21,16 @@ MonoBehaviour:
   - key: ObjectShape
     value: CUBE
   - key: RaymarchingShaderDirectory
-    value: Assets\uRaymarching\Shaders\Include\UniversalRP
+    value: Assets\uRaymarching\Runtime\Shaders\Include\UniversalRP
   - key: RenderType
-    value: Transparent
+    value: Opaque
   - key: RenderQueue
-    value: Transparent
+    value: Geometry
   - key: LOD
-    value: 100
+    value: 300
   conditions:
   - key: ShadowCaster
-    value: 0
+    value: 1
   - key: FullScreen
     value: 0
   - key: WorldSpace

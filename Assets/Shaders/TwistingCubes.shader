@@ -1,4 +1,4 @@
-Shader "Raymarching/UniversalRP_SphereBoxMorph_Unlit"
+Shader "Raymarching/TwistingCubes"
 {
 
 Properties
@@ -22,7 +22,8 @@ Properties
     [PowerSlider(10.0)] _NormalDelta("NormalDelta", Range(0.00001, 0.1)) = 0.0001
 
 // @block Properties
-// _Color2("Color2", Color) = (1.0, 1.0, 1.0, 1.0)
+// [Header(Additional Properties)]
+//_Color2("Color2", Color) = (1.0, 0, 1.0, 1.0)
 // @endblock
 }
 
@@ -38,11 +39,13 @@ Tags
     "DisableBatching" = "True"
 }
 
-LOD 300
+LOD 200
 
 HLSLINCLUDE
 
 #define OBJECT_SHAPE_CUBE
+
+#define CHECK_IF_INSIDE_OBJECT
 
 #define DISTANCE_FUNCTION DistanceFunction
 #define POST_EFFECT PostEffect
@@ -54,17 +57,17 @@ HLSLINCLUDE
 #include "Assets\uRaymarching\Runtime\Shaders\Include\UniversalRP/Utils.hlsl"
 
 // @block DistanceFunction
-inline float DistanceFunction(float3 pos)
+inline float DistanceFunction(float3 position)
 {
-    float t = _Time.x;
-    float a = 6 * PI * t;
-    float s = pow(sin(a), 2.0);
-    float d1 = Sphere(pos, 0.75);
-    float d2 = RoundBox(
-        Repeat(pos, 0.2),
-        0.1 - 0.1 * s,
-        0.1 / length(pos * 2.0));
-    return lerp(d1, d2, s);
+    float time = _Time.x;
+    float angle = 6 * PI * time;
+    float sineSquared = pow(sin(angle), 2.0);
+    float distanceToSphere = Sphere(position, 0.75);
+    float distanceToRoundBox = RoundBox(
+        Repeat(position, 0.2),
+        0.1 - 0.1 * sineSquared,
+        0.1 / length(position * 2.0));
+    return lerp(distanceToSphere, distanceToRoundBox, sineSquared);
 }
 // @endblock
 
@@ -97,8 +100,6 @@ Pass
     #pragma prefer_hlslcc gles
     #pragma exclude_renderers d3d11_9x
     #pragma target 2.0
-
-    #define RAY_STOPS_AT_DEPTH_TEXTURE
 
     #pragma vertex Vert
     #pragma fragment Frag
