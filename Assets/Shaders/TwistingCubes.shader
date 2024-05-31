@@ -43,6 +43,8 @@ LOD 200
 
 HLSLINCLUDE
 
+#define WORLD_SPACE 
+
 #define OBJECT_SHAPE_CUBE
 
 #define CHECK_IF_INSIDE_OBJECT
@@ -57,17 +59,16 @@ HLSLINCLUDE
 #include "Assets\uRaymarching\Runtime\Shaders\Include\UniversalRP/Utils.hlsl"
 
 // @block DistanceFunction
+inline float displacement( in float3 p )
+{
+    return fbm4(p+float3(1.0,0.0,0.8));
+}
+
 inline float DistanceFunction(float3 position)
 {
-    float time = _Time.x;
-    float angle = 6 * PI * time;
-    float sineSquared = pow(sin(angle), 2.0);
-    float distanceToSphere = Sphere(position, 0.75);
-    float distanceToRoundBox = RoundBox(
-        Repeat(position, 0.2),
-        0.1 - 0.1 * sineSquared,
-        0.1 / length(position * 2.0));
-    return lerp(distanceToSphere, distanceToRoundBox, sineSquared);
+    float distanceToPlane = position.y*0.1 + displacement(position);
+    
+    return distanceToPlane;
 }
 // @endblock
 
@@ -76,9 +77,9 @@ inline float DistanceFunction(float3 position)
 // @block PostEffect
 inline void PostEffect(RaymarchInfo ray, inout PostEffectOutput o)
 {
-    float ao = 1.0 - pow(1.0 * ray.loop / ray.maxLoop, 2);
-    o.rgb *= ao;
-    o.a *= pow(ao, 3);
+    //float ao = 1.0 - pow(1.0 * ray.loop / ray.maxLoop, 2);
+    //o.rgb *= ao;
+    //o.a *= pow(ao, 3);
 }
 // @endblock
 
@@ -103,7 +104,7 @@ Pass
 
     #pragma vertex Vert
     #pragma fragment Frag
-    #include "Assets\uRaymarching\Runtime\Shaders\Include\UniversalRP/ForwardUnlit.hlsl"
+    #include "Assets\uRaymarching\Runtime\Shaders\Include\UniversalRP/ForwardUnlitCustom.hlsl"
 
     ENDHLSL
 }

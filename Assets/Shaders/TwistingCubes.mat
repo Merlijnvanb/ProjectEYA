@@ -29,7 +29,7 @@ Material:
     - _BlendDst: 10
     - _BlendSrc: 5
     - _Cull: 0
-    - _DistanceMultiplier: 1
+    - _DistanceMultiplier: 2
     - _Loop: 30
     - _MinDistance: 0.01
     - _NormalDelta: 0.0001
