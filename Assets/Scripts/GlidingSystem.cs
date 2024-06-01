@@ -88,7 +88,7 @@ public class GlidingSystem : MonoBehaviour
             LerpValue = 0;
         }
 
-        Debug.Log(TiltValue);
+        //Debug.Log(TiltValue);
 
         Quaternion targetRotation = Quaternion.Euler(CameraTransform.eulerAngles.x, CameraTransform.eulerAngles.y, Mathf.Clamp(-TiltValue, -85f, 85f));
         transform.rotation = Quaternion.Lerp(transform.rotation, targetRotation, RotationSpeed * Time.deltaTime);
