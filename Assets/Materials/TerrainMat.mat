@@ -88,7 +88,7 @@ Material:
     m_Floats:
     - _AlphaClip: 0
     - _AlphaToMask: 0
-    - _Amplitude: 99.59
+    - _Amplitude: 329
     - _Blend: 0
     - _BlendModePreserveSpecular: 1
     - _BumpScale: 1
@@ -98,6 +98,7 @@ Material:
     - _Cutoff: 0.5
     - _DetailAlbedoMapScale: 1
     - _DetailNormalMapScale: 1
+    - _DistanceBlend: 0.95
     - _DstBlend: 0
     - _DstBlendAlpha: 0
     - _EnvironmentReflections: 1
@@ -106,7 +107,7 @@ Material:
     - _GlossyReflections: 0
     - _Metallic: 0
     - _OcclusionStrength: 1
-    - _Octaves: 4.9
+    - _Octaves: 6.1
     - _Parallax: 0.005
     - _QueueControl: 0
     - _QueueOffset: 0
@@ -121,6 +122,7 @@ Material:
     - _WireThickness: 100
     - _WorkflowMode: 1
     - _ZWrite: 1
+    - _n: 0
     m_Colors:
     - _BaseColor: {r: 1, g: 1, b: 1, a: 1}
     - _Color: {r: 1, g: 1, b: 1, a: 1}

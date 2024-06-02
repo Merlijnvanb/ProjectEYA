@@ -20,6 +20,7 @@ public class PlaneGenerator : MonoBehaviour
 
     List<Vector3> vertices;
     List<int> triangles;
+    List<Vector3> normals;
 
     void Awake()
     {
@@ -38,15 +39,15 @@ public class PlaneGenerator : MonoBehaviour
 
     void Update()
     {
-        if(planeResolution != previousRes || planeSize != previousSize)
+        if (planeResolution != previousRes || planeSize != previousSize)
         {
-        planeResolution = Mathf.Clamp(planeResolution, 1, 500);
+            planeResolution = Mathf.Clamp(planeResolution, 1, 500);
 
-        previousRes = planeResolution;
-        previousSize = planeSize;
+            previousRes = planeResolution;
+            previousSize = planeSize;
 
-        GeneratePlane(planeSize, planeResolution);
-        AssignMesh();
+            GeneratePlane(planeSize, planeResolution);
+            AssignMesh();
         }
     }
 
@@ -54,10 +55,11 @@ public class PlaneGenerator : MonoBehaviour
     {
         //Create vertices
         vertices = new List<Vector3>();
+        normals = new List<Vector3>();
         float xPerStep = size.x / resolution;
         float yPerStep = size.y / resolution;
-        float xOffset = size.x/2;
-        float yOffset = size.y/2;
+        float xOffset = size.x / 2;
+        float yOffset = size.y / 2;
         for (int y = 0; y < resolution + 1; y++)
         {
             for (int x = 0; x < resolution + 1; x++)
@@ -65,6 +67,7 @@ public class PlaneGenerator : MonoBehaviour
                 float xPos = x * xPerStep - xOffset;
                 float yPos = y * yPerStep - yOffset;
                 vertices.Add(new Vector3(xPos, 0, yPos));
+                normals.Add(Vector3.up); // Add normal pointing up
             }
         }
 
@@ -94,6 +97,7 @@ public class PlaneGenerator : MonoBehaviour
         myMesh.Clear();
         myMesh.vertices = vertices.ToArray();
         myMesh.triangles = triangles.ToArray();
+        myMesh.normals = normals.ToArray(); // Assign normals to the mesh
         Debug.Log("Assigned Mesh");
     }
 }
