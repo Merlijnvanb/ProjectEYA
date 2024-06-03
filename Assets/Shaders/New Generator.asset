@@ -31,7 +31,7 @@ MonoBehaviour:
   - key: RenderQueue
     value: Geometry
   - key: ObjectShape
-    value: CUBE
+    value: NONE
   - key: RaymarchingShaderDirectory
     value: Assets\uRaymarching\Runtime\Shaders\Include\UniversalRP
   conditions:
@@ -72,17 +72,17 @@ MonoBehaviour:
       = (1.0, 0, 1.0, 1.0)'
     folded: 0
   - key: DistanceFunction
-    value: "inline float displacement( in float3 p )\n{\n    return fbm4(p+float3(1.0,0.0,0.8));\n}\n\ninline
-      float DistanceFunction(float3 position)\n{\n    float distanceToPlane = position.y*0.1
-      + displacement(position);\n    \n    return distanceToPlane;\n}"
+    value: "inline float sdSphere(float3 p, float3 r)\n{\n    return length(p) -
+      r;\n}\n\ninline float DistanceFunction(float3 p)\n{\n    float distanceToPlane
+      = p.y;\n    float distanceToSphere = sdSphere(p - float3(0, 50, 150), 100.0);\n\n   
+      return smin(distanceToPlane, distanceToSphere, 3.);\n}"
     folded: 1
   - key: PostEffect
     value: "inline void PostEffect(RaymarchInfo ray, inout PostEffectOutput o)\n{\n   
-      //float ao = 1.0 - pow(1.0 * ray.loop / ray.maxLoop, 2);\n    //o.rgb *= ao;\n   
-      //o.a *= pow(ao, 3);\n}"
+      \n}"
     folded: 0
   constants: {fileID: 11400000, guid: 3fc7bca6894034dec9dc046eade7d602, type: 2}
-  basicFolded: 0
+  basicFolded: 1
   conditionsFolded: 1
   variablesFolded: 1
   materialsFolded: 0

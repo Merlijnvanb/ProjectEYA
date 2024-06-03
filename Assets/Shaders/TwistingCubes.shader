@@ -45,7 +45,7 @@ HLSLINCLUDE
 
 #define WORLD_SPACE 
 
-#define OBJECT_SHAPE_CUBE
+#define OBJECT_SHAPE_NONE
 
 #define CHECK_IF_INSIDE_OBJECT
 
@@ -59,16 +59,17 @@ HLSLINCLUDE
 #include "Assets\uRaymarching\Runtime\Shaders\Include\UniversalRP/Utils.hlsl"
 
 // @block DistanceFunction
-inline float displacement( in float3 p )
+inline float sdSphere(float3 p, float3 r)
 {
-    return fbm4(p+float3(1.0,0.0,0.8));
+    return length(p) - r;
 }
 
-inline float DistanceFunction(float3 position)
+inline float DistanceFunction(float3 p)
 {
-    float distanceToPlane = position.y*0.1 + displacement(position);
-    
-    return distanceToPlane;
+    float distanceToPlane = p.y;
+    float distanceToSphere = sdSphere(p - float3(0, 50, 150), 100.0);
+
+    return smin(distanceToPlane, distanceToSphere, 3.);
 }
 // @endblock
 
@@ -77,9 +78,7 @@ inline float DistanceFunction(float3 position)
 // @block PostEffect
 inline void PostEffect(RaymarchInfo ray, inout PostEffectOutput o)
 {
-    //float ao = 1.0 - pow(1.0 * ray.loop / ray.maxLoop, 2);
-    //o.rgb *= ao;
-    //o.a *= pow(ao, 3);
+    
 }
 // @endblock
 
@@ -104,7 +103,7 @@ Pass
 
     #pragma vertex Vert
     #pragma fragment Frag
-    #include "Assets\uRaymarching\Runtime\Shaders\Include\UniversalRP/ForwardUnlitCustom.hlsl"
+    #include "Assets\uRaymarching\Runtime\Shaders\Include\UniversalRP/ForwardUnlit.hlsl"
 
     ENDHLSL
 }

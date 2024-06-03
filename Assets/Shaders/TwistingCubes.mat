@@ -23,21 +23,36 @@ Material:
   m_LockedProperties: 
   m_SavedProperties:
     serializedVersion: 3
-    m_TexEnvs: []
+    m_TexEnvs:
+    - _BaseMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _ClearCoatMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
     m_Ints: []
     m_Floats:
     - _BlendDst: 10
     - _BlendSrc: 5
+    - _ClearCoat: 0
+    - _ClearCoatMask: 1
+    - _ClearCoatSmoothness: 1
     - _Cull: 0
-    - _DistanceMultiplier: 2
-    - _Loop: 30
+    - _DistanceMultiplier: 1
+    - _EnvironmentReflections: 1
+    - _Loop: 100
+    - _Metallic: 1
     - _MinDistance: 0.01
     - _NormalDelta: 0.0001
     - _ShadowExtraBias: 0.01
     - _ShadowLoop: 10
     - _ShadowMinDistance: 0.01
+    - _Smoothness: 0.442
     - _ZWrite: 1
     m_Colors:
-    - _Color: {r: 1, g: 1, b: 1, a: 1}
+    - _BaseColor: {r: 1, g: 1, b: 1, a: 1}
+    - _Color: {r: 0.19020207, g: 0.23837452, b: 0.37106913, a: 1}
     - _Color2: {r: 1, g: 1, b: 1, a: 1}
   m_BuildTextureStacks: []

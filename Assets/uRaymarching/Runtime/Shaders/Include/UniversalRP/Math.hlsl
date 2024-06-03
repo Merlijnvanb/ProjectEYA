@@ -74,11 +74,13 @@ inline float3 Mod(float3 a, float3 b)
     return frac(abs(a / b)) * abs(b);
 }
 
-inline float SmoothMin(float d1, float d2, float k)
+inline float smin(float a, float b, float k)
 {
-    float h = exp(-k * d1) + exp(-k * d2);
-    return -log(h) / k;
+    k *= 1.0 / (1.0 - sqrt(0.5));
+    return max(k, min(a, b)) -
+           length(max(float2(k - a, k - b), 0.0));
 }
+
 
 inline float Repeat(float pos, float span)
 {

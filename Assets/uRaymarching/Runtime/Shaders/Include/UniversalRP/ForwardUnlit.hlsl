@@ -2,6 +2,8 @@
 #define URAYMARCHING_FORWARD_UNLIT_HLSL
 
 #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Core.hlsl"
+#include "Packages/com.unity.render-pipelines.universal/Shaders/LitInput.hlsl"
+#include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Lighting.hlsl"
 #include "Packages/com.unity.render-pipelines.core/ShaderLibrary/SpaceTransforms.hlsl"
 #include "./Primitives.hlsl"
 #include "./Raymarching.hlsl"
@@ -62,9 +64,19 @@ FragOutput Frag(Varyings input)
     INITIALIZE_RAYMARCH_INFO(ray, input, _Loop, _MinDistance);
     Raymarch(ray);
 
+    InputData inputData = (InputData)0;
+    inputData.positionWS = ray.endPos;
+    inputData.normalWS = DecodeNormalWS(ray.normal);
+    inputData.viewDirectionWS = SafeNormalize(GetCameraPosition() - ray.endPos);
+    inputData.shadowCoord = TransformWorldToShadowCoord(ray.endPos);
+
     FragOutput o;
 
-    o.color = _Color;
+    Light light = GetMainLight();
+    float diffuse = saturate(dot(light.direction, inputData.normalWS));
+    half4 diffuseColor = half4(diffuse * light.color.rgb, 1.0);
+
+    o.color = _Color * diffuseColor;
     o.depth = ray.depth;
 
     AlphaDiscard(o.color.a, _Cutoff);
