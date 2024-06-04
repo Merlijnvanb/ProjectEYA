@@ -73,7 +73,7 @@ FragOutput Frag(Varyings input)
     FragOutput o;
 
     Light light = GetMainLight();
-    float diffuse = saturate(dot(light.direction, inputData.normalWS));
+    float diffuse = clamp(dot(light.direction, inputData.normalWS), 0.05, 1.);
     half4 diffuseColor = half4(diffuse * light.color.rgb, 1.0);
 
     o.color = _Color * diffuseColor;

@@ -76,11 +76,15 @@ inline float3 Mod(float3 a, float3 b)
 
 inline float smin(float a, float b, float k)
 {
-    k *= 1.0 / (1.0 - sqrt(0.5));
-    return max(k, min(a, b)) -
-           length(max(float2(k - a, k - b), 0.0));
+    k *= 1.0;
+    float r = exp2(-a / k) + exp2(-b / k);
+    return -k * log2(r);
 }
 
+inline float smax(float a, float b, float k)
+{
+    return smin(a, b, -k);
+}
 
 inline float Repeat(float pos, float span)
 {

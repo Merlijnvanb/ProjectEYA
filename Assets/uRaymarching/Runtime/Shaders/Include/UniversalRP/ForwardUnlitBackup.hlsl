@@ -1,4 +1,4 @@
-﻿#ifndef URAYMARCHING_FORWARD_UNLIT_HLSL
+#ifndef URAYMARCHING_FORWARD_UNLIT_HLSL
 #define URAYMARCHING_FORWARD_UNLIT_HLSL
 
 #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Core.hlsl"
