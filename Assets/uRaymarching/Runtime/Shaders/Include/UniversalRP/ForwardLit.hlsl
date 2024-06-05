@@ -117,6 +117,7 @@ FragOutput Frag(Varyings input)
 #endif
 
     half4 color = UniversalFragmentPBR(inputData, surfaceData);
+    color.rgb = lerp(color.rgb, surfaceData.albedo, .5);
     color.rgb = MixFog(color.rgb, inputData.fogCoord);
     color.a = OutputAlpha(color.a, _Surface);
 

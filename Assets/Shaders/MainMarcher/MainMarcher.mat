@@ -23,23 +23,39 @@ Material:
   m_LockedProperties: 
   m_SavedProperties:
     serializedVersion: 3
-    m_TexEnvs: []
+    m_TexEnvs:
+    - _BaseMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _ClearCoatMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
     m_Ints: []
     m_Floats:
     - _BlendDst: 10
     - _BlendSrc: 5
+    - _ClearCoat: 0
+    - _ClearCoatMask: 0
+    - _ClearCoatSmoothness: 1
     - _Cull: 0
     - _DistanceMultiplier: 1
+    - _EnvironmentReflections: 1
     - _Loop: 100
+    - _Metallic: 1
     - _MinDistance: 0.01
     - _NormalDelta: 0.0001
     - _ShadowExtraBias: 0.01
     - _ShadowLoop: 10
     - _ShadowMinDistance: 0.01
-    - _Smooth: 1
+    - _Smooth: 17.16
+    - _Smoothness: 0.5
     - _ZWrite: 1
     m_Colors:
+    - _BaseColor: {r: 0.5, g: 0.5, b: 0.5, a: 1}
     - _Color: {r: 1, g: 1, b: 1, a: 1}
-    - _PlaneColor: {r: 0.5532214, g: 0.69402534, b: 0.9308171, a: 1}
-    - _SphereColor: {r: 0.9116044, g: 0.216981, b: 1, a: 1}
+    - _PlaneColor: {r: 0.43441707, g: 0.54273707, b: 0.72327036, a: 1}
+    - _PlayerSphereColor: {r: 1, g: 1, b: 1, a: 1}
+    - _SphereColor: {r: 0.37706175, g: 0.5849056, b: 0.40721753, a: 1}
   m_BuildTextureStacks: []

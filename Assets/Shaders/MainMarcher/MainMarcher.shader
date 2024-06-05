@@ -92,11 +92,11 @@ inline void PostEffect(RaymarchInfo ray, inout PostEffectOutput o)
     float4 pPos = mul(_Plane, float4(wpos, 1.0));
     float4 sPos = mul(_Sphere, float4(wpos, 1.0));
     float p = Plane(pPos, float3(0, 1, 0));
-    float s = Sphere(sPos, 5.);
-    float2 a = normalize(float2(1.0 / p, 1.0 / s));
-    o *= normalize( // remove normalize when found issue of smax lighting thing
+    float s = Sphere(sPos, 1.);
+    float2 a = normalize(saturate(float2(1.0 / p, 1.0 / s)));
+    o = lerp(o,  // remove normalize when found issue of smax lighting thing
         a.x * _PlaneColor +
-        a.y * _SphereColor);
+        a.y * _SphereColor, .5);
 }
 // @endblock
 
