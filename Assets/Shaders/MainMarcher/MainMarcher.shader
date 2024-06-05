@@ -26,6 +26,7 @@ Properties
 _Smooth("Smooth", float) = 1.0
 [HDR]_PlaneColor("Plane Color", Color) = (1.0, 1.0, 1.0, 1.0)
 [HDR]_SphereColor("Sphere Color", Color) = (1.0, 1.0, 1.0, 1.0)
+[HDR]_PlayerColor("Player Color", Color) = (1.0, 1.0, 1.0, 1.0)
 // @endblock
 }
 
@@ -70,13 +71,12 @@ float _Smooth;
 inline float DistanceFunction(float3 wpos)
 {
     float4 pPos = mul(_Plane, float4(wpos, 1.0));
-    float4 sPos = mul(_Sphere, float4(wpos, 1.0));
     float4 playerPos = mul(_Player, float4(wpos, 1.0));
     float p = Plane(pPos, float3(0, 1, 0));
-    float s = Sphere(Repeat(wpos, 5.), 1.);
+    float s = Sphere(Repeat(wpos, 15.), 5.);
     float playerSphere = Sphere(playerPos, 15.);
 
-    return smax(-playerSphere, smin(s, p, _Smooth), _Smooth);
+    return min(smax(-playerSphere, smin(s, p, _Smooth), _Smooth), p);
 }
 // @endblock
 
@@ -85,18 +85,32 @@ inline float DistanceFunction(float3 wpos)
 // @block PostEffect
 float4 _PlaneColor;
 float4 _SphereColor;
+float4 _PlayerColor;
+
+// float3 CalculateFresnelEffect(CustomLightingData d, Light light)
+// {
+//     Light light = GetMainLight();
+//     float EdgeIllumination = pow(1 - saturate(dot(d.viewDirectionWS, d.normalWS)), d.edgePower);
+//     float ShadowTerm = pow(saturate(dot(d.normalWS, -(light.direction))), d.shadowPower);
+
+//     return (max(step(0.2, (EdgeIllumination * ShadowTerm)), ((EdgeIllumination * ShadowTerm) * 0.25)) * d.fresnelStrength) * light.color;
+// }
 
 inline void PostEffect(RaymarchInfo ray, inout PostEffectOutput o)
 {
-    // float3 wpos = ray.endPos;
-    // float4 pPos = mul(_Plane, float4(wpos, 1.0));
-    // float4 sPos = mul(_Sphere, float4(wpos, 1.0));
-    // float p = Plane(pPos, float3(0, 1, 0));
-    // float s = Sphere(sPos, 1.);
-    // float2 a = normalize(saturate(float2(1.0 / p, 1.0 / s)));
-    // o = lerp(o,  // remove normalize when found issue of smax lighting thing
-    //     a.x * _PlaneColor +
-    //     a.y * _SphereColor, .5);
+    float3 wpos = ray.endPos;
+    float4 pPos = mul(_Plane, float4(wpos, 1.0));
+    float4 sPos = mul(_Sphere, float4(wpos, 1.0));
+    float4 playerPos = mul(_Player, float4(wpos, 1.0));
+    float p = Plane(pPos, float3(0, 1, 0));
+    float s = Sphere(sPos, 5.);
+    float playerSphere = Sphere(playerPos, 30.);
+    float3 a = normalize(saturate(float3(1.0 / p, 1.0 / s, 1.0 / playerSphere)));
+    o = lerp(o,  // remove normalize when found issue of smax lighting thing
+        a.x * _PlaneColor +
+        a.y * _SphereColor + 
+        a.z * _PlayerColor, .5);
+    //o += CalculateFresnelEffect();
 }
 // @endblock
 

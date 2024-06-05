@@ -56,6 +56,7 @@ Material:
     - _BaseColor: {r: 0.5, g: 0.5, b: 0.5, a: 1}
     - _Color: {r: 1, g: 1, b: 1, a: 1}
     - _PlaneColor: {r: 0.43441707, g: 0.54273707, b: 0.72327036, a: 1}
+    - _PlayerColor: {r: 0, g: 0.30174482, b: 1.6711776, a: 1}
     - _PlayerSphereColor: {r: 1, g: 1, b: 1, a: 1}
-    - _SphereColor: {r: 0.37706175, g: 0.5849056, b: 0.40721753, a: 1}
+    - _SphereColor: {r: 0.5849056, g: 0.1918055, b: 0.016553832, a: 1}
   m_BuildTextureStacks: []
