@@ -45,18 +45,19 @@ Material:
     - _Loop: 100
     - _Metallic: 1
     - _MinDistance: 0.01
-    - _NormalDelta: 0.0001
+    - _NormalDelta: 0.0006
     - _ShadowExtraBias: 0.01
     - _ShadowLoop: 10
     - _ShadowMinDistance: 0.01
-    - _Smooth: 39.41
+    - _Smooth: 34.84
     - _Smoothness: 0.5
     - _ZWrite: 1
     m_Colors:
     - _BaseColor: {r: 0.5, g: 0.5, b: 0.5, a: 1}
-    - _Color: {r: 1, g: 1, b: 1, a: 1}
+    - _Color: {r: 0.6855345, g: 0.29063842, b: 0.25222486, a: 1}
+    - _EnvironmentColor: {r: 0.49685526, g: 0.49685526, b: 0.49685526, a: 1}
     - _PlaneColor: {r: 0.43441707, g: 0.54273707, b: 0.72327036, a: 1}
-    - _PlayerColor: {r: 0, g: 0.30174482, b: 1.6711776, a: 1}
+    - _PlayerColor: {r: 0.45911938, g: 0.45911938, b: 0.45911938, a: 1}
     - _PlayerSphereColor: {r: 1, g: 1, b: 1, a: 1}
-    - _SphereColor: {r: 0.5849056, g: 0.1918055, b: 0.016553832, a: 1}
+    - _SphereColor: {r: 0.63207537, g: 0.7689199, b: 1, a: 1}
   m_BuildTextureStacks: []

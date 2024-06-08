@@ -70,33 +70,27 @@ MonoBehaviour:
 
       _Smooth("Smooth", float) = 1.0
 
-      [HDR]_PlaneColor("Plane
+      [HDR]_EnvironmentColor("Environment
       Color", Color) = (1.0, 1.0, 1.0, 1.0)
 
-      [HDR]_SphereColor("Sphere Color",
-      Color) = (1.0, 1.0, 1.0, 1.0)
-
-      [HDR]_PlayerColor("Player Color", Color)
-      = (1.0, 1.0, 1.0, 1.0)'
+      [HDR]_PlayerColor("Player Color",
+      Color) = (1.0, 1.0, 1.0, 1.0)'
     folded: 0
   - key: DistanceFunction
     value: "float4x4 _Plane;\nfloat4x4 _Sphere;\nfloat4x4 _Player;\n\nfloat _Smooth;\n\ninline
-      float DistanceFunction(float3 wpos)\n{\n    float4 pPos = mul(_Plane, float4(wpos,
-      1.0));\n    float4 playerPos = mul(_Player, float4(wpos, 1.0));\n    float
-      p = Plane(pPos, float3(0, 1, 0));\n    float s = Sphere(Repeat(wpos, 15.),
-      5.);\n    float playerSphere = Sphere(playerPos, 15.);\n\n    return min(smax(-playerSphere,
-      smin(s, p, _Smooth), _Smooth), p);\n}"
+      float DistanceFunction(float3 wpos)\n{\n    float4 playerPos = mul(_Player,
+      float4(wpos, 1.0));\n    float playerSphere = Sphere(playerPos, 15.);\n\n   
+      float h = dot(sin(wpos*playerPos*.0173),cos(wpos*playerPos.zxy*.0191))*30.;\n   
+      float h2 = h*h;\n\n    return smax(-playerSphere, h2, _Smooth);\n}"
     folded: 1
   - key: PostEffect
-    value: "float4 _PlaneColor;\nfloat4 _SphereColor;\nfloat4 _PlayerColor;\n\ninline
-      void PostEffect(RaymarchInfo ray, inout PostEffectOutput o)\n{\n    float3
-      wpos = ray.endPos;\n    float4 pPos = mul(_Plane, float4(wpos, 1.0));\n   
-      float4 playerPos = mul(_Player, float4(wpos, 1.0));\n    float p = Plane(pPos,
-      float3(0, 1, 0));\n    float s = Sphere(Repeat(wpos, 15.), 5.);\n    float
-      playerSphere = Sphere(playerPos, 15.);\n    float3 a = normalize(saturate(float3(1.0
-      / p, 1.0 / s, 1.0 / playerSphere)));\n    o = lerp(o,  // remove normalize
-      when found issue of smax lighting thing\n        a.x * _PlaneColor +\n       
-      a.y * _SphereColor + \n        a.z * _PlayerColor, .5);\n}"
+    value: "float4 _PlayerColor;\nfloat4 _EnvironmentColor;\n\ninline void PostEffect(RaymarchInfo
+      ray, inout PostEffectOutput o)\n{\n    float3 wpos = ray.endPos;\n\n    float4
+      playerPos = mul(_Player, float4(wpos, 1.0));\n    float playerSphere = Sphere(playerPos,
+      15.);\n\n    float h = dot(sin(wpos*.0173),cos(wpos.zxy*.0191))*30.;\n\n   
+      float2 a = normalize(saturate(float2(1.0 / h, 1.0 / playerSphere)));\n    o
+      *=   // remove normalize when found issue of smax lighting thing\n        a.x
+      * _EnvironmentColor + \n        a.y * _PlayerColor;\n}"
     folded: 1
   constants: {fileID: 11400000, guid: 3fc7bca6894034dec9dc046eade7d602, type: 2}
   basicFolded: 1

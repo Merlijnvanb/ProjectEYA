@@ -46,6 +46,10 @@ inline float3 Repeat(float3 pos, float3 span)
     return pos-span*round(pos/span);
 }
 
+inline float2 rotate(float2 v, float a) {
+    return float2(cos(a) * v.x + sin(a) * v.y, -sin(a) * v.x + cos(a) * v.y);
+}
+
 inline float3 Rotate(float3 p, float angle, float3 axis)
 {
     float3 a = normalize(axis);
