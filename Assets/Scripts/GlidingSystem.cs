@@ -33,6 +33,10 @@ public class GlidingSystem : MonoBehaviour
     private void FixedUpdate() 
     {
         GlidingMovement();
+        
+        Marcher.SetFloat("_Speed", Rb.velocity.magnitude);
+        Marcher.SetFloat("_MaxSpeed", MagnitudeLimit);
+        Debug.Log((Rb.velocity.magnitude/MagnitudeLimit) * (Rb.velocity.magnitude/MagnitudeLimit) + "           " + Rb.velocity.magnitude);
     }
 
     void Update()
@@ -43,10 +47,6 @@ public class GlidingSystem : MonoBehaviour
         }
 
         ManageRotation();
-
-        Marcher.SetFloat("_Speed", Rb.velocity.magnitude);
-        Marcher.SetFloat("_MaxSpeed", MagnitudeLimit);
-        Debug.Log(Mathf.Clamp(Rb.velocity.magnitude/MagnitudeLimit, 0.0f, 1.0f));
     }
 
     private void GlidingMovement()

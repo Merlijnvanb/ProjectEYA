@@ -13,7 +13,7 @@ Properties
     [Toggle][KeyEnum(Off, On)] _ZWrite("ZWrite", Float) = 1
 
     [Header(Raymarching)]
-    _Loop("Loop", Range(1, 100)) = 30
+    _Loop("Loop", Range(1, 200)) = 30
     _MinDistance("Minimum Distance", Range(0.001, 0.1)) = 0.01
     _DistanceMultiplier("Distance Multiplier", Range(0.001, 2.0)) = 1.0
     _ShadowLoop("Shadow Loop", Range(1, 100)) = 10
@@ -72,7 +72,7 @@ float _MaxSpeed = 1;
 
 inline float DistanceFunction(float3 wpos)
 {
-    float normalizedSpeed = saturate(_Speed / _MaxSpeed);
+    float normalizedSpeed = min(_Speed / _MaxSpeed, 1.);
 
     float4 playerPos = mul(_Player, float4(wpos, 1.0));
     float playerSphere = Sphere(playerPos, 15.);
@@ -81,8 +81,8 @@ inline float DistanceFunction(float3 wpos)
     float h = dot(sin(wpos*.0173*(sin(_Time * 0.1)/3. + 1.0)),cos(wpos*.0191*(sin(_Time * 0.1)/3. + 1.0)))*30.;
     float h2 = pow(h, 2.0);
 
-    float d = hNormal + sin(wpos.y*.3);
-    float d2 = h2/10 + sin(wpos.y*3);
+    float d = hNormal + sin(wpos.y*.03)/3;
+    float d2 = h/5. + sin(wpos.y*.3)/3;
 
     float tunnel = 15. - length(wpos.xy)-hNormal;
 
@@ -100,21 +100,43 @@ float4 _EnvironmentColor;
 inline void PostEffect(RaymarchInfo ray, inout PostEffectOutput o)
 {
     float3 wpos = ray.endPos;
+    float3 normal = ray.normal;
 
-    float ao = 1.0 - pow(1.0 * ray.loop / ray.maxLoop, 2);
 
     float4 playerPos = mul(_Player, float4(wpos, 1.0));
-    float playerSphere = Sphere(playerPos, 15.);
+    float playerSphere = smoothstep(.0, 1., Sphere(playerPos, 2.));
 
-    float h = dot(sin(wpos*.0173),cos(wpos.zxy*.0191))*30.;
 
-    float2 a = normalize(saturate(float2(1.0 / h, 1.0 / playerSphere)));
-    o *=   // remove normalize when found issue of smax lighting thing
-        a.x * _EnvironmentColor + 
-        a.y * _PlayerColor;
+    float normalizedSpeed = min(_Speed / _MaxSpeed, 1.);
+    float hNormal = dot(sin(wpos*.0173), cos(wpos.zxy*.0191))*30;
+    float h = dot(sin(wpos*.0173*(sin(_Time * 0.1)/3. + 1.0)),cos(wpos*.0191*(sin(_Time * 0.1)/3. + 1.0)))*30.;
+    float h2 = pow(h, 2.0);
 
-   // o.rgb *= ao;
-    //o.a *= pow(ao, 3);
+    float d = hNormal + sin(wpos.y*.03)/3;
+    float d2 = h/5. + sin(wpos.y*.3)/3;
+
+    float tunnel = 15. - length(wpos.xy)-hNormal;
+
+    float terrain = lerp(smax(d, tunnel, 80.), smax(d2, tunnel, 80.), normalizedSpeed);
+
+
+    float ao = 1.0 - pow(1.0 * ray.loop / ray.maxLoop, 2);
+    o.rgb *= ao;
+    o.a *= pow(ao, 5);
+
+
+    float2 colors = normalize(saturate (float2(1.0/playerSphere, 1.0/terrain)));
+    o *=  
+        colors.x * _PlayerColor +
+        colors.y * _EnvironmentColor;
+
+    // float h = dot(sin(wpos*.0173),cos(wpos.zxy*.0191))*30.;
+
+    // float2 a = normalize(saturate(float2(1.0 / h, 1.0 / playerSphere)));
+    // o *=   // remove normalize when found issue of smax lighting thing
+    //     a.x * _EnvironmentColor + 
+    //     a.y * _PlayerColor;
+
 }
 // @endblock
 

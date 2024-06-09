@@ -77,20 +77,36 @@ MonoBehaviour:
       Color) = (1.0, 1.0, 1.0, 1.0)'
     folded: 0
   - key: DistanceFunction
-    value: "float4x4 _Plane;\nfloat4x4 _Sphere;\nfloat4x4 _Player;\n\nfloat _Smooth;\n\ninline
-      float DistanceFunction(float3 wpos)\n{\n    float4 playerPos = mul(_Player,
-      float4(wpos, 1.0));\n    float playerSphere = Sphere(playerPos, 15.);\n\n   
-      float h = dot(sin(wpos*playerPos*.0173),cos(wpos*playerPos.zxy*.0191))*30.;\n   
-      float h2 = h*h;\n\n    return smax(-playerSphere, h2, _Smooth);\n}"
+    value: "float4x4 _Plane;\nfloat4x4 _Sphere;\nfloat4x4 _Player;\n\nfloat _Smooth;\n\nfloat
+      _Speed = 0;\nfloat _MaxSpeed = 1;\n\ninline float DistanceFunction(float3 wpos)\n{\n   
+      float normalizedSpeed = min(_Speed / _MaxSpeed, 1.);\n\n    float4 playerPos
+      = mul(_Player, float4(wpos, 1.0));\n    float playerSphere = Sphere(playerPos,
+      15.);\n\n    float hNormal = dot(sin(wpos*.0173), cos(wpos.zxy*.0191))*30;\n   
+      float h = dot(sin(wpos*.0173*(sin(_Time * 0.1)/3. + 1.0)),cos(wpos*.0191*(sin(_Time
+      * 0.1)/3. + 1.0)))*30.;\n    float h2 = pow(h, 2.0);\n\n    float d = hNormal
+      + sin(wpos.y*.03)/3;\n    float d2 = h/5. + sin(wpos.y*.3)/3;\n\n    float
+      tunnel = 15. - length(wpos.xy)-hNormal;\n\n    return smax(-playerSphere, lerp(smax(d,
+      tunnel, 80.), smax(d2, tunnel, 80.), normalizedSpeed), _Smooth);\n}"
     folded: 1
   - key: PostEffect
     value: "float4 _PlayerColor;\nfloat4 _EnvironmentColor;\n\ninline void PostEffect(RaymarchInfo
-      ray, inout PostEffectOutput o)\n{\n    float3 wpos = ray.endPos;\n\n    float4
-      playerPos = mul(_Player, float4(wpos, 1.0));\n    float playerSphere = Sphere(playerPos,
-      15.);\n\n    float h = dot(sin(wpos*.0173),cos(wpos.zxy*.0191))*30.;\n\n   
-      float2 a = normalize(saturate(float2(1.0 / h, 1.0 / playerSphere)));\n    o
-      *=   // remove normalize when found issue of smax lighting thing\n        a.x
-      * _EnvironmentColor + \n        a.y * _PlayerColor;\n}"
+      ray, inout PostEffectOutput o)\n{\n    float3 wpos = ray.endPos;\n    float3
+      normal = ray.normal;\n\n\n    float4 playerPos = mul(_Player, float4(wpos,
+      1.0));\n    float playerSphere = Sphere(playerPos, 5.);\n\n\n    float normalizedSpeed
+      = min(_Speed / _MaxSpeed, 1.);\n    float hNormal = dot(sin(wpos*.0173), cos(wpos.zxy*.0191))*30;\n   
+      float h = dot(sin(wpos*.0173*(sin(_Time * 0.1)/3. + 1.0)),cos(wpos*.0191*(sin(_Time
+      * 0.1)/3. + 1.0)))*30.;\n    float h2 = pow(h, 2.0);\n\n    float d = hNormal
+      + sin(wpos.y*.03)/3;\n    float d2 = h/5. + sin(wpos.y*.3)/3;\n\n    float
+      tunnel = 15. - length(wpos.xy)-hNormal;\n\n    float terrain = lerp(smax(d,
+      tunnel, 80.), smax(d2, tunnel, 80.), normalizedSpeed);\n\n\n    float2 colors
+      = normalize(saturate (float2(1.0/playerSphere, 1.0/terrain)));\n    o = lerp(o,
+      \n        colors.x * _PlayerColor +\n        colors.y * _EnvironmentColor,
+      .5);\n\n    // float h = dot(sin(wpos*.0173),cos(wpos.zxy*.0191))*30.;\n\n   
+      // float2 a = normalize(saturate(float2(1.0 / h, 1.0 / playerSphere)));\n   
+      // o *=   // remove normalize when found issue of smax lighting thing\n   
+      //     a.x * _EnvironmentColor + \n    //     a.y * _PlayerColor;\n\n    \n   
+      float ao = 1.0 - pow(1.0 * ray.loop / ray.maxLoop, 2);\n    o.rgb *= ao;\n   
+      o.a *= pow(ao, 5);\n}"
     folded: 1
   constants: {fileID: 11400000, guid: 3fc7bca6894034dec9dc046eade7d602, type: 2}
   basicFolded: 1

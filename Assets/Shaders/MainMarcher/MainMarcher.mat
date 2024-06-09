@@ -54,10 +54,10 @@ Material:
     - _ZWrite: 1
     m_Colors:
     - _BaseColor: {r: 0.5, g: 0.5, b: 0.5, a: 1}
-    - _Color: {r: 0.6855345, g: 0.29063842, b: 0.25222486, a: 1}
-    - _EnvironmentColor: {r: 0.49685526, g: 0.49685526, b: 0.49685526, a: 1}
+    - _Color: {r: 1, g: 1, b: 1, a: 1}
+    - _EnvironmentColor: {r: 0, g: 0, b: 0, a: 1}
     - _PlaneColor: {r: 0.43441707, g: 0.54273707, b: 0.72327036, a: 1}
-    - _PlayerColor: {r: 0.45911938, g: 0.45911938, b: 0.45911938, a: 1}
+    - _PlayerColor: {r: 0.84276724, g: 0.114441685, b: 0.07942309, a: 1}
     - _PlayerSphereColor: {r: 1, g: 1, b: 1, a: 1}
     - _SphereColor: {r: 0.63207537, g: 0.7689199, b: 1, a: 1}
   m_BuildTextureStacks: []
