@@ -106,4 +106,17 @@ inline float3 TwistZ(float3 p, float power)
     return mul(m, p);
 }
 
+inline float Remap(float input, float inMin, float inMax, float outMin, float outMax)
+{
+    float inAbs = input - inMin;
+    float inMaxAbs = inMax - inMin;
+
+    float normalized = inAbs / inMaxAbs;
+
+    float outMaxAbs = outMax - outMin;
+    float outAbs = outMaxAbs * normalized;
+
+    return outAbs + outMin;
+}
+
 #endif

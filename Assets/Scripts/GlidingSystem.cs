@@ -36,7 +36,7 @@ public class GlidingSystem : MonoBehaviour
         
         Marcher.SetFloat("_Speed", Rb.velocity.magnitude);
         Marcher.SetFloat("_MaxSpeed", MagnitudeLimit);
-        Debug.Log((Rb.velocity.magnitude/MagnitudeLimit) * (Rb.velocity.magnitude/MagnitudeLimit) + "           " + Rb.velocity.magnitude);
+        Debug.Log(Rb.velocity.magnitude/MagnitudeLimit + "           " + Rb.velocity.magnitude);
     }
 
     void Update()

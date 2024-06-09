@@ -24,7 +24,8 @@ Properties
 // @block Properties
 [Header(Additional Properties)]
 _Smooth("Smooth", float) = 1.0
-[HDR]_EnvironmentColor("Environment Color", Color) = (1.0, 1.0, 1.0, 1.0)
+[HDR]_EnvironmentColorUp("Environment Color Up", Color) = (1.0, 1.0, 1.0, 1.0)
+[HDR]_EnvironmentColorDown("Environment Color Down", Color) = (1.0, 1.0, 1.0, 1.0)
 [HDR]_PlayerColor("Player Color", Color) = (1.0, 1.0, 1.0, 1.0)
 // @endblock
 }
@@ -70,23 +71,29 @@ float _Smooth;
 float _Speed = 0;
 float _MaxSpeed = 1;
 
-inline float DistanceFunction(float3 wpos)
+inline float ComputeTerrain(float3 wpos)
 {
-    float normalizedSpeed = min(_Speed / _MaxSpeed, 1.);
-
-    float4 playerPos = mul(_Player, float4(wpos, 1.0));
-    float playerSphere = Sphere(playerPos, 15.);
+    float normalizedSpeed = Remap(_Speed / _MaxSpeed, 0., 1., 0., 0.4);
 
     float hNormal = dot(sin(wpos*.0173), cos(wpos.zxy*.0191))*30;
-    float h = dot(sin(wpos*.0173*(sin(_Time * 0.1)/3. + 1.0)),cos(wpos*.0191*(sin(_Time * 0.1)/3. + 1.0)))*30.;
+    float h = dot(sin(wpos*.0173*(sin(_Time * 0.1)/3. + 1.0)),cos(wpos*.0191*(sin(_Time * 0.1)/3. + 1.0)))*30;
     float h2 = pow(h, 2.0);
 
     float d = hNormal + sin(wpos.y*.03)/3;
-    float d2 = h/5. + sin(wpos.y*.3)/3;
+    float d2 = h2/10. + sin(wpos.y*.3)/3;
 
     float tunnel = 15. - length(wpos.xy)-hNormal;
 
-    return smax(-playerSphere, lerp(smax(d, tunnel, 80.), smax(d2, tunnel, 80.), normalizedSpeed), _Smooth);
+    return lerp(smax(d, tunnel, 80.), smax(d2, tunnel, 80.), normalizedSpeed);
+}
+
+
+inline float DistanceFunction(float3 wpos)
+{
+    float4 playerPos = mul(_Player, float4(wpos, 1.0));
+    float playerSphere = Sphere(playerPos, 15.);
+
+    return smax(-playerSphere, ComputeTerrain(wpos), _Smooth);
 }
 // @endblock
 
@@ -95,40 +102,29 @@ inline float DistanceFunction(float3 wpos)
 // @block PostEffect
 
 float4 _PlayerColor;
-float4 _EnvironmentColor;
+float4 _EnvironmentColorUp;
+float4 _EnvironmentColorDown;
 
 inline void PostEffect(RaymarchInfo ray, inout PostEffectOutput o)
 {
     float3 wpos = ray.endPos;
-    float3 normal = ray.normal;
+    float3 normalWS = DecodeNormalWS(ray.normal);
 
 
     float4 playerPos = mul(_Player, float4(wpos, 1.0));
-    float playerSphere = smoothstep(.0, 1., Sphere(playerPos, 2.));
+    float playerSphere = Sphere(playerPos, 15.);
 
+    float terrain = ComputeTerrain(wpos);
 
-    float normalizedSpeed = min(_Speed / _MaxSpeed, 1.);
-    float hNormal = dot(sin(wpos*.0173), cos(wpos.zxy*.0191))*30;
-    float h = dot(sin(wpos*.0173*(sin(_Time * 0.1)/3. + 1.0)),cos(wpos*.0191*(sin(_Time * 0.1)/3. + 1.0)))*30.;
-    float h2 = pow(h, 2.0);
-
-    float d = hNormal + sin(wpos.y*.03)/3;
-    float d2 = h/5. + sin(wpos.y*.3)/3;
-
-    float tunnel = 15. - length(wpos.xy)-hNormal;
-
-    float terrain = lerp(smax(d, tunnel, 80.), smax(d2, tunnel, 80.), normalizedSpeed);
+    float upPointing = saturate(dot(float3(0., 1., 0.), normalWS)) * normalize(terrain);
+    float downPointing = saturate(dot(float3(0., -1., 0.), normalWS)) * normalize(terrain);
+    
+    o = upPointing * _EnvironmentColorUp + downPointing * _EnvironmentColorDown;
 
 
     float ao = 1.0 - pow(1.0 * ray.loop / ray.maxLoop, 2);
     o.rgb *= ao;
     o.a *= pow(ao, 5);
-
-
-    float2 colors = normalize(saturate (float2(1.0/playerSphere, 1.0/terrain)));
-    o *=  
-        colors.x * _PlayerColor +
-        colors.y * _EnvironmentColor;
 
     // float h = dot(sin(wpos*.0173),cos(wpos.zxy*.0191))*30.;
 
