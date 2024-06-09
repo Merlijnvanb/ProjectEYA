@@ -67,15 +67,26 @@ float4x4 _Player;
 
 float _Smooth;
 
+float _Speed = 0;
+float _MaxSpeed = 1;
+
 inline float DistanceFunction(float3 wpos)
 {
+    float normalizedSpeed = saturate(_Speed / _MaxSpeed);
+
     float4 playerPos = mul(_Player, float4(wpos, 1.0));
     float playerSphere = Sphere(playerPos, 15.);
 
-    float h = dot(sin(wpos*.0173*sin((_Time * 0.05) + 1.0)),cos(wpos*.0191*sin((_Time * 0.05) + 1.0)))*30.;
+    float hNormal = dot(sin(wpos*.0173), cos(wpos.zxy*.0191))*30;
+    float h = dot(sin(wpos*.0173*(sin(_Time * 0.1)/3. + 1.0)),cos(wpos*.0191*(sin(_Time * 0.1)/3. + 1.0)))*30.;
     float h2 = pow(h, 2.0);
 
-    return smax(-playerSphere, h2/10.0, _Smooth);
+    float d = hNormal + sin(wpos.y*.3);
+    float d2 = h2/10 + sin(wpos.y*3);
+
+    float tunnel = 15. - length(wpos.xy)-hNormal;
+
+    return smax(-playerSphere, lerp(smax(d, tunnel, 80.), smax(d2, tunnel, 80.), normalizedSpeed), _Smooth);
 }
 // @endblock
 

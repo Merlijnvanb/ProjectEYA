@@ -15,6 +15,9 @@ public class GlidingSystem : MonoBehaviour
     [SerializeField] private float RotationSpeed = 5f;
     [SerializeField] private float TiltStrength = 200f;
     [SerializeField] private float LowPercent = 0.8f, HighPercent = 1f;
+
+    [SerializeField] private Material Marcher;
+
     private float CurrentThrustSpeed;
     private float TiltValue, LerpValue;
 
@@ -40,6 +43,10 @@ public class GlidingSystem : MonoBehaviour
         }
 
         ManageRotation();
+
+        Marcher.SetFloat("_Speed", Rb.velocity.magnitude);
+        Marcher.SetFloat("_MaxSpeed", MagnitudeLimit);
+        Debug.Log(Mathf.Clamp(Rb.velocity.magnitude/MagnitudeLimit, 0.0f, 1.0f));
     }
 
     private void GlidingMovement()
@@ -70,7 +77,7 @@ public class GlidingSystem : MonoBehaviour
             Rb.velocity = currentVelocityNormalized * MagnitudeLimit;
         }
 
-        Debug.Log("Magnitude: " + Rb.velocity.magnitude + "               Mapped Pitch: " + mappedPitch);
+        //Debug.Log("Magnitude: " + Rb.velocity.magnitude + "               Mapped Pitch: " + mappedPitch);
     }
 
     private void ManageRotation() 
