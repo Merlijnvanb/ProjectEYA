@@ -77,7 +77,32 @@ MonoBehaviour:
       Color Down", Color) = (1.0, 1.0, 1.0, 1.0)
 
       [HDR]_PlayerColor("Player
-      Color", Color) = (1.0, 1.0, 1.0, 1.0)'
+      Color", Color) = (1.0, 1.0, 1.0, 1.0)
+
+
+      [Header(Custom Lighting)]
+
+      _SurfaceSmoothness("Smoothness",
+      float) = .5
+
+      _AmbientOcclusion("Ambient Occlusion", float) = .5
+
+
+      _EdgePower("Edge
+      Power", float) = 0.
+
+      _ShadowPower("Shadow Power", float) = 0.
+
+      _FresnelStrength("Fresnel
+      Strength", float) = 0.
+
+
+      _CellAmount("Cell Amount", float) = 0.
+
+      _SpecularStrength("Specular
+      Strength", float) = 0.
+
+      _PosterizeSteps("Posterize Steps", float) = 0.'
     folded: 0
   - key: DistanceFunction
     value: "float4x4 _Plane;\nfloat4x4 _Sphere;\nfloat4x4 _Player;\n\nfloat _Smooth;\n\nfloat
@@ -95,18 +120,19 @@ MonoBehaviour:
     folded: 1
   - key: PostEffect
     value: "float4 _PlayerColor;\nfloat4 _EnvironmentColorUp;\nfloat4 _EnvironmentColorDown;\n\ninline
-      void PostEffect(RaymarchInfo ray, inout PostEffectOutput o)\n{\n    float3
+      float3 PostEffect(RaymarchInfo ray, inout PostEffectOutput o)\n{\n    float3
       wpos = ray.endPos;\n    float3 normalWS = DecodeNormalWS(ray.normal);\n\n\n   
       float4 playerPos = mul(_Player, float4(wpos, 1.0));\n    float playerSphere
       = Sphere(playerPos, 15.);\n\n    float terrain = ComputeTerrain(wpos);\n\n   
-      float upPointing = saturate(dot(float3(0., 1., 0.), normalWS)) * normalize(terrain);\n   
-      float downPointing = saturate(dot(float3(0., -1., 0.), normalWS)) * normalize(terrain);\n   
-      \n    o = upPointing * _EnvironmentColorUp + downPointing * _EnvironmentColorDown;\n\n\n   
-      float ao = 1.0 - pow(1.0 * ray.loop / ray.maxLoop, 2);\n    o.rgb *= ao;\n   
-      o.a *= pow(ao, 5);\n\n    // float h = dot(sin(wpos*.0173),cos(wpos.zxy*.0191))*30.;\n\n   
-      // float2 a = normalize(saturate(float2(1.0 / h, 1.0 / playerSphere)));\n   
-      // o *=   // remove normalize when found issue of smax lighting thing\n   
-      //     a.x * _EnvironmentColor + \n    //     a.y * _PlayerColor;\n\n}"
+      float upPointing = saturate(dot(float3(0., 1., 0.), normalWS));\n    float
+      downPointing = saturate(dot(float3(0., -1., 0.), normalWS));\n    \n    o =
+      lerp(o, upPointing * _EnvironmentColorUp + downPointing * _EnvironmentColorDown,
+      .3);\n\n\n    //float ao = 1.0 - pow(1.0 * ray.loop / ray.maxLoop, 2);\n   
+      //o.rgb *= ao;\n    //o.a *= pow(ao, 5);\n\n    return o.rgb;\n\n    // float
+      h = dot(sin(wpos*.0173),cos(wpos.zxy*.0191))*30.;\n\n    // float2 a = normalize(saturate(float2(1.0
+      / h, 1.0 / playerSphere)));\n    // o *=   // remove normalize when found issue
+      of smax lighting thing\n    //     a.x * _EnvironmentColor + \n    //     a.y
+      * _PlayerColor;\n\n}"
     folded: 1
   constants: {fileID: 11400000, guid: 3fc7bca6894034dec9dc046eade7d602, type: 2}
   basicFolded: 1

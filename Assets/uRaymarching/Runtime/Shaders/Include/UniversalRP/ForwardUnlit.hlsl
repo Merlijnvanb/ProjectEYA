@@ -5,12 +5,28 @@
 #include "Packages/com.unity.render-pipelines.universal/Shaders/LitInput.hlsl"
 #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Lighting.hlsl"
 #include "Packages/com.unity.render-pipelines.core/ShaderLibrary/SpaceTransforms.hlsl"
+#include "Assets/Shaders/CustomLighting.hlsl"
 #include "./Primitives.hlsl"
 #include "./Raymarching.hlsl"
+#include "./Structs.hlsl"
 
 int _Loop;
 float _MinDistance;
 float4 _Color;
+
+float _SurfaceSmoothness;
+float _AmbientOcclusion;
+
+float _EdgePower;
+float _ShadowPower;
+float _FresnelStrength;
+
+float _CellAmount;
+float _SpecularStrength;
+float _PosterizeSteps;
+
+float4 _AmbienColor;
+float _AmbientIntensity;
 
 struct Attributes
 {
@@ -72,11 +88,37 @@ FragOutput Frag(Varyings input)
 
     FragOutput o;
 
-    Light light = GetMainLight();
-    float diffuse = max(0.005, dot(light.direction, inputData.normalWS));
-    half4 diffuseColor = half4(diffuse * light.color.rgb, 1.0);
 
-    o.color = _Color * diffuseColor;
+    CustomLightingData d;
+
+    d.positionWS = inputData.positionWS;
+    d.normalWS = inputData.normalWS;
+    d.viewDirectionWS = inputData.viewDirectionWS;
+    d.shadowCoord = inputData.shadowCoord;
+
+    d.ambientColor = _AmbienColor.rgb;
+    d.smoothness = _SurfaceSmoothness;
+    d.ambientOcclusion = _AmbientOcclusion;
+    d.ambientIntensity = _AmbientIntensity;
+
+    float2 lightmapUV;
+    OUTPUT_LIGHTMAP_UV(LightmapUV, unity_LightmapST, lightmapUV);
+	
+    float3 vertexSH;
+    OUTPUT_SH(DecodeNormalWS(ray.normal), vertexSH);
+	
+    d.bakedGI = SAMPLE_GI(lightmapUV, vertexSH, DecodeNormalWS(ray.normal));
+    d.shadowMask = SAMPLE_SHADOWMASK(lightmapUV);
+
+    d.edgePower = _EdgePower;
+    d.shadowPower = _ShadowPower;
+    d.fresnelStrength = _FresnelStrength;
+
+    d.cellAmount = _CellAmount;
+    d.specularStrength = _SpecularStrength;
+    d.posterizeSteps = _PosterizeSteps;
+
+    //o.color = float4(1.0, 1.0, 1.0, 1.0);
     o.depth = ray.depth;
 
     AlphaDiscard(o.color.a, _Cutoff);
@@ -86,9 +128,10 @@ FragOutput Frag(Varyings input)
 #endif
 
 #ifdef POST_EFFECT
-    POST_EFFECT(ray, o.color);
+    d.albedo = POST_EFFECT(ray, o.color);
 #endif
 
+    o.color.rgb = CalculateCustomLighting(d);
     o.color.rgb = MixFog(o.color.rgb, input.fogCoord);
 
     return o;

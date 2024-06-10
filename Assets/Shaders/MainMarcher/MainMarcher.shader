@@ -27,6 +27,21 @@ _Smooth("Smooth", float) = 1.0
 [HDR]_EnvironmentColorUp("Environment Color Up", Color) = (1.0, 1.0, 1.0, 1.0)
 [HDR]_EnvironmentColorDown("Environment Color Down", Color) = (1.0, 1.0, 1.0, 1.0)
 [HDR]_PlayerColor("Player Color", Color) = (1.0, 1.0, 1.0, 1.0)
+
+[Header(Custom Lighting)]
+_SurfaceSmoothness("Smoothness", float) = .5
+_AmbientOcclusion("Ambient Occlusion", float) = .5
+
+_AmbienColor("Ambient Color", Color) = (1.0,1.0,1.0,1.0)
+_AmbientIntensity("Ambient Intensity", float) = 0.
+
+_EdgePower("Edge Power", float) = 0.
+_ShadowPower("Shadow Power", float) = 0.
+_FresnelStrength("Fresnel Strength", float) = 0.
+
+_CellAmount("Cell Amount", float) = 0.
+_SpecularStrength("Specular Strength", float) = 0.
+_PosterizeSteps("Posterize Steps", float) = 0.
 // @endblock
 }
 
@@ -105,7 +120,7 @@ float4 _PlayerColor;
 float4 _EnvironmentColorUp;
 float4 _EnvironmentColorDown;
 
-inline void PostEffect(RaymarchInfo ray, inout PostEffectOutput o)
+inline float3 PostEffect(RaymarchInfo ray, inout PostEffectOutput o)
 {
     float3 wpos = ray.endPos;
     float3 normalWS = DecodeNormalWS(ray.normal);
@@ -116,15 +131,17 @@ inline void PostEffect(RaymarchInfo ray, inout PostEffectOutput o)
 
     float terrain = ComputeTerrain(wpos);
 
-    float upPointing = saturate(dot(float3(0., 1., 0.), normalWS)) * normalize(terrain);
-    float downPointing = saturate(dot(float3(0., -1., 0.), normalWS)) * normalize(terrain);
+    float upPointing = saturate(dot(float3(0., 1., 0.), normalWS));
+    float downPointing = saturate(dot(float3(0., -1., 0.), normalWS));
     
     o = upPointing * _EnvironmentColorUp + downPointing * _EnvironmentColorDown;
 
 
-    float ao = 1.0 - pow(1.0 * ray.loop / ray.maxLoop, 2);
-    o.rgb *= ao;
-    o.a *= pow(ao, 5);
+    //float ao = 1.0 - pow(1.0 * ray.loop / ray.maxLoop, 2);
+    //o.rgb *= ao;
+    //o.a *= pow(ao, 5);
+
+    return o.rgb;
 
     // float h = dot(sin(wpos*.0173),cos(wpos.zxy*.0191))*30.;
 
