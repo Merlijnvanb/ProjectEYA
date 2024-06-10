@@ -25,7 +25,6 @@ float _CellAmount;
 float _SpecularStrength;
 float _PosterizeSteps;
 
-float4 _AmbienColor;
 float _AmbientIntensity;
 
 struct Attributes
@@ -96,7 +95,6 @@ FragOutput Frag(Varyings input)
     d.viewDirectionWS = inputData.viewDirectionWS;
     d.shadowCoord = inputData.shadowCoord;
 
-    d.ambientColor = _AmbienColor.rgb;
     d.smoothness = _SurfaceSmoothness;
     d.ambientOcclusion = _AmbientOcclusion;
     d.ambientIntensity = _AmbientIntensity;

@@ -32,7 +32,6 @@ _Smooth("Smooth", float) = 1.0
 _SurfaceSmoothness("Smoothness", float) = .5
 _AmbientOcclusion("Ambient Occlusion", float) = .5
 
-_AmbienColor("Ambient Color", Color) = (1.0,1.0,1.0,1.0)
 _AmbientIntensity("Ambient Intensity", float) = 0.
 
 _EdgePower("Edge Power", float) = 0.
@@ -137,9 +136,9 @@ inline float3 PostEffect(RaymarchInfo ray, inout PostEffectOutput o)
     o = upPointing * _EnvironmentColorUp + downPointing * _EnvironmentColorDown;
 
 
-    //float ao = 1.0 - pow(1.0 * ray.loop / ray.maxLoop, 2);
-    //o.rgb *= ao;
-    //o.a *= pow(ao, 5);
+    float ao = 1.0 - pow(1.0 * ray.loop / ray.maxLoop, 2);
+    o.rgb *= ao;
+    o.a *= pow(ao, 5);
 
     return o.rgb;
 

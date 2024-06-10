@@ -32,7 +32,6 @@ struct CustomLightingData
 	
 	// Surface Attributes
     float3 albedo;
-    float3 ambientColor;
     float smoothness;
     float ambientOcclusion;
     float ambientIntensity;
