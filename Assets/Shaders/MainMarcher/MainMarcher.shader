@@ -24,6 +24,8 @@ Properties
 // @block Properties
 [Header(Additional Properties)]
 _Smooth("Smooth", float) = 1.0
+_1to2("Stage 1 to 2", float) = 0.
+_2to3("Stage 2 to 3", float) = 0.
 [HDR]_EnvironmentColorUp("Environment Color Up", Color) = (1.0, 1.0, 1.0, 1.0)
 [HDR]_EnvironmentColorDown("Environment Color Down", Color) = (1.0, 1.0, 1.0, 1.0)
 [HDR]_PlayerColor("Player Color", Color) = (1.0, 1.0, 1.0, 1.0)
@@ -76,18 +78,58 @@ HLSLINCLUDE
 #include "Assets\uRaymarching\Runtime\Shaders\Include\UniversalRP/Utils.hlsl"
 
 // @block DistanceFunction
-float4x4 _Plane;
-float4x4 _Sphere;
 float4x4 _Player;
+
+float4x4 _Point4;
+float4x4 _Point5;
+float4x4 _Point6;
+float4x4 _PointFinal;
 
 float _Smooth;
 
 float _Speed = 0;
 float _MaxSpeed = 1;
 
-inline float ComputeTerrain(float3 wpos)
+float _1to2;
+float _2to3;
+
+inline float Terrain1Height(float2 pos)
+{
+    float duneHeight = cos(pos.y / 300.0) - abs(sin(pos.x / 300.0 * 0.7 + cos(pos.y / 300.0)));
+
+    return duneHeight * 150.0-75.;
+}
+
+inline float ComputeTerrain1(float3 wpos)
+{
+    float height = Terrain1Height(float2(wpos.x, wpos.z));
+
+    return wpos.y - height;
+}
+
+inline float ComputeTerrain2(float3 wpos)
+{
+    float4 point4Pos = mul(_Point4, float4(wpos, 1.0));
+    float4 point5Pos = mul(_Point5, float4(wpos, 1.0));
+    float4 point6Pos = mul(_Point6, float4(wpos, 1.0));
+
+    float point4Sphere = Sphere(point4Pos, 100.);
+    float point5Sphere = Sphere(point5Pos, 100.);
+    float point6Sphere = Sphere(point6Pos, 200.);
+
+    float minPoints = min(min(point4Sphere, point5Sphere), point6Sphere);
+
+    float h = dot(sin(wpos*.0173), cos(wpos.zxy*.0191))*30;
+//whynowork
+    return smax(-minPoints, h, 100.);
+}
+
+inline float ComputeTerrain3(float3 wpos)
 {
     float normalizedSpeed = Remap(_Speed / _MaxSpeed, 0., 1., 0., 0.4);
+
+    float4 pointFinalPos = mul(_PointFinal, float4(wpos, 1.0));
+    float pointFinalSphere = Sphere(pointFinalPos, 1000.);
 
     float hNormal = dot(sin(wpos*.0173), cos(wpos.zxy*.0191))*30;
     float h = dot(sin(wpos*.0173*(sin(_Time * 0.1)/3. + 1.0)),cos(wpos*.0191*(sin(_Time * 0.1)/3. + 1.0)))*30;
@@ -98,7 +140,7 @@ inline float ComputeTerrain(float3 wpos)
 
     float tunnel = 15. - length(wpos.xy)-hNormal;
 
-    return lerp(smax(d, tunnel, 80.), smax(d2, tunnel, 80.), normalizedSpeed);
+    return smax(-pointFinalSphere, lerp(smax(d, tunnel, 80.), smax(d2, tunnel, 80.), normalizedSpeed), 200.);
 }
 
 
@@ -107,7 +149,10 @@ inline float DistanceFunction(float3 wpos)
     float4 playerPos = mul(_Player, float4(wpos, 1.0));
     float playerSphere = Sphere(playerPos, 15.);
 
-    return smax(-playerSphere, ComputeTerrain(wpos), _Smooth);
+    float dist1to2 = lerp(ComputeTerrain1(wpos), ComputeTerrain2(wpos), _1to2);
+    float dist1to3 = lerp(dist1to2, ComputeTerrain3(wpos), _2to3);
+
+    return smax(-playerSphere, dist1to3, 80.);
 }
 // @endblock
 
@@ -128,7 +173,7 @@ inline float3 PostEffect(RaymarchInfo ray, inout PostEffectOutput o)
     float4 playerPos = mul(_Player, float4(wpos, 1.0));
     float playerSphere = Sphere(playerPos, 15.);
 
-    float terrain = ComputeTerrain(wpos);
+    float terrain = DistanceFunction(wpos);
 
     float upPointing = saturate(dot(float3(0., 1., 0.), normalWS));
     float downPointing = saturate(dot(float3(0., -1., 0.), normalWS));

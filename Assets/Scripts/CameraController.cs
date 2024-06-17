@@ -27,9 +27,8 @@ public class CameraTracking : MonoBehaviour
     private void FollowTargetTransform()
     {
         Vector3 desiredPosition = PlayerTransform.position + Offset;
-        Vector3 positionInterpolation = Vector3.SmoothDamp(transform.position, desiredPosition, ref CurrentVelocity, SmoothTime);
-
-        transform.position = positionInterpolation;
+        
+        transform.position = desiredPosition;
     }
     private void CameraRotation()
     {

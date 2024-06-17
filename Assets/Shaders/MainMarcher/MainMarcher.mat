@@ -34,41 +34,43 @@ Material:
         m_Offset: {x: 0, y: 0}
     m_Ints: []
     m_Floats:
-    - _AmbientIntensity: 0.15
-    - _AmbientOcclusion: 5.82
+    - _1to2: 0
+    - _2to3: 0
+    - _AmbientIntensity: 0.1
+    - _AmbientOcclusion: 1.23
     - _BlendDst: 10
     - _BlendSrc: 5
-    - _CellAmount: 1.02
+    - _CellAmount: 0
     - _ClearCoat: 0
     - _ClearCoatMask: 0
     - _ClearCoatSmoothness: 1
     - _Cull: 0
     - _DistanceMultiplier: 1
-    - _EdgePower: 7.94
+    - _EdgePower: 12.23
     - _EnvironmentReflections: 1
     - _FresnelStrength: 0.83
-    - _Loop: 100
+    - _Loop: 200
     - _Metallic: 1
-    - _MinDistance: 0.1
-    - _NormalDelta: 0.003
-    - _PosterizeSteps: 0
+    - _MinDistance: 0.0815
+    - _NormalDelta: 0.1
+    - _PosterizeSteps: 30
     - _ShadowExtraBias: 0.01
     - _ShadowLoop: 10
     - _ShadowMinDistance: 0.01
-    - _ShadowPower: 0.09
+    - _ShadowPower: 0.01
     - _Smooth: 30.21
     - _Smoothness: 0.5
-    - _SpecularStrength: 1.04
-    - _Speed: 50.000004
-    - _SurfaceSmoothness: 0.98
+    - _SpecularStrength: 1
+    - _Speed: 0.85222715
+    - _SurfaceSmoothness: 0.76
     - _ZWrite: 1
     m_Colors:
     - _AmbienColor: {r: 0.7725491, g: 0.7725491, b: 0.7725491, a: 1}
     - _BaseColor: {r: 0.5, g: 0.5, b: 0.5, a: 1}
     - _Color: {r: 1, g: 1, b: 1, a: 1}
     - _EnvironmentColor: {r: 0, g: 0, b: 0, a: 1}
-    - _EnvironmentColorDown: {r: 0.076576486, g: 0.13425569, b: 0.27058825, a: 1}
-    - _EnvironmentColorUp: {r: 0.72955966, g: 0.41984087, b: 0.7064137, a: 1}
+    - _EnvironmentColorDown: {r: 0.35414824, g: 0.27394086, b: 0.509434, a: 1}
+    - _EnvironmentColorUp: {r: 0.032534286, g: 0.053377792, b: 0.22012573, a: 1}
     - _PlaneColor: {r: 0.43441707, g: 0.54273707, b: 0.72327036, a: 1}
     - _PlayerColor: {r: 0.5031446, g: 0.11416076, b: 0.058541894, a: 1}
     - _PlayerSphereColor: {r: 1, g: 1, b: 1, a: 1}

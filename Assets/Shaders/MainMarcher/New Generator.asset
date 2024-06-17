@@ -70,6 +70,11 @@ MonoBehaviour:
 
       _Smooth("Smooth", float) = 1.0
 
+      _1to2("Stage
+      1 to 2", float) = 0.
+
+      _2to3("Stage 2 to 3", float) = 0.
+
       [HDR]_EnvironmentColorUp("Environment
       Color Up", Color) = (1.0, 1.0, 1.0, 1.0)
 
@@ -109,25 +114,40 @@ MonoBehaviour:
       _PosterizeSteps("Posterize Steps", float) = 0.'
     folded: 0
   - key: DistanceFunction
-    value: "float4x4 _Plane;\nfloat4x4 _Sphere;\nfloat4x4 _Player;\n\nfloat _Smooth;\n\nfloat
-      _Speed = 0;\nfloat _MaxSpeed = 1;\n\ninline float ComputeTerrain(float3 wpos)\n{\n   
+    value: "float4x4 _Player;\n\nfloat4x4 _Point4;\nfloat4x4 _Point5;\nfloat4x4 _Point6;\nfloat4x4
+      _PointFinal;\n\nfloat _Smooth;\n\nfloat _Speed = 0;\nfloat _MaxSpeed = 1;\n\nfloat
+      _1to2;\nfloat _2to3;\n\ninline float Terrain1Height(float2 pos)\n{\n    float
+      duneHeight = cos(pos.y / 300.0) - abs(sin(pos.x / 300.0 * 0.7 + cos(pos.y /
+      300.0)));\n\n    return duneHeight * 150.0-75.;\n}\n\ninline float ComputeTerrain1(float3
+      wpos)\n{\n    float height = Terrain1Height(float2(wpos.x, wpos.z));\n\n   
+      return wpos.y - height;\n}\n\ninline float ComputeTerrain2(float3 wpos)\n{\n   
+      float4 point4Pos = mul(_Point4, float4(wpos, 1.0));\n    float4 point5Pos =
+      mul(_Point5, float4(wpos, 1.0));\n    float4 point6Pos = mul(_Point6, float4(wpos,
+      1.0));\n\n    float point4Sphere = Sphere(point4Pos, 100.);\n    float point5Sphere
+      = Sphere(point5Pos, 100.);\n    float point6Sphere = Sphere(point6Pos, 200.);\n\n   
+      float minPoints = min(min(point4Sphere, point5Sphere), point6Sphere);\n\n   
+      float h = dot(sin(wpos*.0173), cos(wpos.zxy*.0191))*30;\n//whynowork\n    return
+      smax(-minPoints, h, 100.);\n}\n\ninline float ComputeTerrain3(float3 wpos)\n{\n   
       float normalizedSpeed = Remap(_Speed / _MaxSpeed, 0., 1., 0., 0.4);\n\n   
-      float hNormal = dot(sin(wpos*.0173), cos(wpos.zxy*.0191))*30;\n    float h
-      = dot(sin(wpos*.0173*(sin(_Time * 0.1)/3. + 1.0)),cos(wpos*.0191*(sin(_Time
-      * 0.1)/3. + 1.0)))*30;\n    float h2 = pow(h, 2.0);\n\n    float d = hNormal
-      + sin(wpos.y*.03)/3;\n    float d2 = h2/10. + sin(wpos.y*.3)/3;\n\n    float
-      tunnel = 15. - length(wpos.xy)-hNormal;\n\n    return lerp(smax(d, tunnel,
-      80.), smax(d2, tunnel, 80.), normalizedSpeed);\n}\n\n\ninline float DistanceFunction(float3
+      float4 pointFinalPos = mul(_PointFinal, float4(wpos, 1.0));\n    float pointFinalSphere
+      = Sphere(pointFinalPos, 1000.);\n\n    float hNormal = dot(sin(wpos*.0173),
+      cos(wpos.zxy*.0191))*30;\n    float h = dot(sin(wpos*.0173*(sin(_Time * 0.1)/3.
+      + 1.0)),cos(wpos*.0191*(sin(_Time * 0.1)/3. + 1.0)))*30;\n    float h2 = pow(h,
+      2.0);\n\n    float d = hNormal + sin(wpos.y*.03)/3;\n    float d2 = h2/10.
+      + sin(wpos.y*.3)/3;\n\n    float tunnel = 15. - length(wpos.xy)-hNormal;\n\n   
+      return smax(-pointFinalSphere, lerp(smax(d, tunnel, 80.), smax(d2, tunnel,
+      80.), normalizedSpeed), 200.);\n}\n\n\ninline float DistanceFunction(float3
       wpos)\n{\n    float4 playerPos = mul(_Player, float4(wpos, 1.0));\n    float
-      playerSphere = Sphere(playerPos, 15.);\n\n    return smax(-playerSphere, ComputeTerrain(wpos),
-      _Smooth);\n}"
+      playerSphere = Sphere(playerPos, 15.);\n\n    float dist1to2 = lerp(ComputeTerrain1(wpos),
+      ComputeTerrain2(wpos), _1to2);\n    float dist1to3 = lerp(dist1to2, ComputeTerrain3(wpos),
+      _2to3);\n\n    return smax(-playerSphere, dist1to3, 80.);\n}"
     folded: 1
   - key: PostEffect
     value: "float4 _PlayerColor;\nfloat4 _EnvironmentColorUp;\nfloat4 _EnvironmentColorDown;\n\ninline
       float3 PostEffect(RaymarchInfo ray, inout PostEffectOutput o)\n{\n    float3
       wpos = ray.endPos;\n    float3 normalWS = DecodeNormalWS(ray.normal);\n\n\n   
       float4 playerPos = mul(_Player, float4(wpos, 1.0));\n    float playerSphere
-      = Sphere(playerPos, 15.);\n\n    float terrain = ComputeTerrain(wpos);\n\n   
+      = Sphere(playerPos, 15.);\n\n    float terrain = DistanceFunction(wpos);\n\n   
       float upPointing = saturate(dot(float3(0., 1., 0.), normalWS));\n    float
       downPointing = saturate(dot(float3(0., -1., 0.), normalWS));\n    \n    o =
       upPointing * _EnvironmentColorUp + downPointing * _EnvironmentColorDown;\n\n\n   
